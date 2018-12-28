@@ -2,6 +2,13 @@
 
 
 def dijkstra(graph, start, end):
+    """
+    迪杰斯特拉
+    :param graph:   权值图
+    :param start:   起点
+    :param end:     终点
+    :return:        起点终点最短距离
+    """
     g_len = len(graph)
     # 初始化最短距离列表:用于记录start点到每个点的最短距离
     dist = [graph[start][i] for i in range(g_len)]
@@ -13,7 +20,7 @@ def dijkstra(graph, start, end):
         if not visit[i]:
             for j in range(g_len):
                 if graph[i][j] != -1:
-                    new_dist = dist[i]+graph[i][j]
+                    new_dist = dist[i] + graph[i][j]
                     # 若新计算出的距离比原有的最短距离短则保存
                     if new_dist < dist[j] or dist[j] == -1:
                         dist[j] = new_dist
