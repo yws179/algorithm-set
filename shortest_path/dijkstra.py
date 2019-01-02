@@ -1,5 +1,7 @@
 # coding=utf-8
 
+INF = float('inf')
+
 
 def dijkstra(graph, start, end):
     """
@@ -15,30 +17,43 @@ def dijkstra(graph, start, end):
     # 记录每个节点是否遍历的状态
     visit = [False for _ in range(g_len)]
     visit[start] = True
+    # 记录最短距路线
+    path_r = []
+    # key:点A val:点B
+    # shortest_distance_A = shortest_distance_B + distance_A_B
+    path_map = {start: start}
     # 遍历地图数据
     for i in range(g_len):
         if not visit[i]:
             for j in range(g_len):
-                if graph[i][j] != -1:
+                if graph[i][j] != INF:
                     new_dist = dist[i] + graph[i][j]
                     # 若新计算出的距离比原有的最短距离短则保存
-                    if new_dist < dist[j] or dist[j] == -1:
+                    if new_dist < dist[j]:
                         dist[j] = new_dist
+                        path_map[j] = i
             visit[i] = True
-    return dist[end]
+    step = end
+    while True:
+        path_r.append(str(step))
+        step = path_map.get(step)
+        if step == start or step is None:
+            path_r.append(str(start))
+            break
+    return dist[end], path_r[::-1]
 
 
 if __name__ == '__main__':
     # 地图: 0 汕头 1 深圳 2 珠海 3 茂名 4 湛江 5 佛山 6 广州 7 清远
     graph_m = [
-        [0., -1., -1., -1., -1., -1., -1., -1.],
-        [-1., 0., -1., -1., -1., -1., -1., -1.],
-        [-1., -1., 0., -1., -1., -1., -1., -1.],
-        [-1., -1., -1., 0., -1., -1., -1., -1.],
-        [-1., -1., -1., -1., 0., -1., -1., -1.],
-        [-1., -1., -1., -1., -1., 0., -1., -1.],
-        [-1., -1., -1., -1., -1., -1., 0., -1.],
-        [-1., -1., -1., -1., -1., -1., -1., 0.]]
+        [0., INF, INF, INF, INF, INF, INF, INF],
+        [INF, 0., INF, INF, INF, INF, INF, INF],
+        [INF, INF, 0., INF, INF, INF, INF, INF],
+        [INF, INF, INF, 0., INF, INF, INF, INF],
+        [INF, INF, INF, INF, 0., INF, INF, INF],
+        [INF, INF, INF, INF, INF, 0., INF, INF],
+        [INF, INF, INF, INF, INF, INF, 0., INF],
+        [INF, INF, INF, INF, INF, INF, INF, 0.]]
 
     # 初始化地图
     graph_m[0][2] = graph_m[2][0] = 485.2
@@ -56,5 +71,5 @@ if __name__ == '__main__':
 
     s = input("请输入起点序号：（0 汕头 1 深圳 2 珠海 3 茂名 4 湛江 5 佛山 6 广州 7 清远）")
     e = input("请输入终点序号：（0 汕头 1 深圳 2 珠海 3 茂名 4 湛江 5 佛山 6 广州 7 清远）")
-    shortest_dist = dijkstra(graph_m, int(s), int(e))
-    print("%s到%s最短路程为%.2f公里" % (s, e, shortest_dist))
+    (shortest_dist, path) = dijkstra(graph_m, int(s), int(e))
+    print("%s到%s最短路程为%.2f公里, 路径为%s" % (s, e, shortest_dist, '->'.join(path)))
